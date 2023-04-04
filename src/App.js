@@ -8,6 +8,7 @@ function App() {
   const [location, setLocation] = useState("");
   const [forecast, setForecast] = useState([]);
   const [todayForecast, setTodayForecast] = useState();
+  const [tempHours, setTempsHours] = useState([]);
 
   const getWeatherData = async (e) => {
     e.preventDefault();
@@ -19,15 +20,15 @@ function App() {
     setLocation(data.location);
     setForecast(data.forecast.forecastday.slice(1));
     setTodayForecast(data.forecast.forecastday[0]);
-
-    const dataHours = todayForecast.hour;
     const currentHours = new Date().getHours();
-    const tempHours = dataHours
-      .map((hour, index) => ({ key: index, value: hour }))
-      .filter((hour) => hour.key >= currentHours)
-      .map((hour) => hour.value);
+    setTempsHours(
+      todayForecast.hour
+        .map((hour, index) => ({ key: index, value: hour }))
+        .filter((hour) => hour.key >= currentHours)
+        .map((hour) => hour.value)
+    );
   };
-  console.log(tempHours)
+  console.log(forecast)
 
   return (
     <div className="App">
@@ -50,25 +51,27 @@ function App() {
               <p>{weatherData.condition.text}</p>
               <img src={weatherData.condition.icon} alt="icon" />
             </div>
-          </div>{" "}
-          {tempHours.map((temp) => {
-            <>
-              <p>temp.temp_c</p>
-            </>;
-          })}
-          <div>
-            <div></div>
           </div>
-          {/* <div>
+          <div>
+            {tempHours.map((temp) => (
+              <div key={temp.time}>
+                <p>{temp.time.split(" ").pop()}h</p>
+                <p>{temp.temp_c}°C</p>
+              </div>
+            ))}
+          </div>
+           <div>
             <div key={forecast.date}>
               {forecast.map((forecast) => (
                 <>
                   <p>{forecast.date}</p>
-                  <p>{forecast.day.avgtemp_c}°C</p>
+                  <img src={forecast.day.condition.icon} alt="icon"/>
+                  <p>{forecast.day.mintemp_c}°C</p>
+                  <p>{forecast.day.maxtemp_c}°C</p>
                 </>
               ))}
             </div>
-          </div> */}
+          </div>  
         </div>
       )}
     </div>
