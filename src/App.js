@@ -7,6 +7,7 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [location, setLocation] = useState("");
   const [forecast, setForecast] = useState([]);
+  const [todayForecast, setTodayForecast] = useState();
 
   const getWeatherData = async (e) => {
     e.preventDefault();
@@ -17,8 +18,16 @@ function App() {
     setWeatherData(data.current);
     setLocation(data.location);
     setForecast(data.forecast.forecastday.slice(1));
-    console.log(forecast);
+    setTodayForecast(data.forecast.forecastday[0]);
+
+    const dataHours = todayForecast.hour;
+    const currentHours = new Date().getHours();
+    const tempHours = dataHours
+      .map((hour, index) => ({ key: index, value: hour }))
+      .filter((hour) => hour.key >= currentHours)
+      .map((hour) => hour.value);
   };
+  console.log(tempHours)
 
   return (
     <div className="App">
@@ -33,14 +42,24 @@ function App() {
       {weatherData && (
         <div>
           <div>
-            {location.name},{location.region}{" "}
+            {location.name}, {location.region}{" "}
           </div>
           <div>
             <div>
               <p> {weatherData.temp_c}°C,</p>
+              <p>{weatherData.condition.text}</p>
+              <img src={weatherData.condition.icon} alt="icon" />
             </div>
-          </div>
+          </div>{" "}
+          {tempHours.map((temp) => {
+            <>
+              <p>temp.temp_c</p>
+            </>;
+          })}
           <div>
+            <div></div>
+          </div>
+          {/* <div>
             <div key={forecast.date}>
               {forecast.map((forecast) => (
                 <>
@@ -49,7 +68,7 @@ function App() {
                 </>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
