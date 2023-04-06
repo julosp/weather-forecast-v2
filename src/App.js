@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -9,26 +9,37 @@ function App() {
   const [forecast, setForecast] = useState([]);
   const [todayForecast, setTodayForecast] = useState();
   const [tempHours, setTempsHours] = useState([]);
+  const [loading, isLoading] = useState(false);
 
   const getWeatherData = async (e) => {
     e.preventDefault();
+    isLoading(true);
     const url = `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${city}&days=8
     `;
-    const response = await fetch(url);
-    const data = await response.json();
-    setWeatherData(data.current);
-    setLocation(data.location);
-    setForecast(data.forecast.forecastday.slice(1));
-    setTodayForecast(data.forecast.forecastday[0]);
-    const currentHours = new Date().getHours();
-    setTempsHours(
-      todayForecast.hour
-        .map((hour, index) => ({ key: index, value: hour }))
-        .filter((hour) => hour.key >= currentHours)
-        .map((hour) => hour.value)
-    );
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setWeatherData(data.current);
+      setLocation(data.location);
+      setForecast(data.forecast.forecastday.slice(1));
+      setTodayForecast(data.forecast.forecastday[0]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      isLoading(false);
+    }
   };
-  console.log(forecast)
+  useEffect(() => {
+    if (todayForecast) {
+      const currentHours = new Date().getHours();
+      setTempsHours(
+        todayForecast.hour
+          .map((hour, index) => ({ key: index, value: hour }))
+          .filter((hour) => hour.key >= currentHours)
+          .map((hour) => hour.value)
+      );
+    }
+  }, [todayForecast]);
 
   return (
     <div className="App">
@@ -40,38 +51,43 @@ function App() {
         />
         <button type="submit">Get Weather</button>
       </form>
-      {weatherData && (
+      {loading && <p>Loading...</p>}
+      {!loading && (
         <div>
           <div>
             {location.name}, {location.region}{" "}
           </div>
-          <div>
-            <div>
-              <p> {weatherData.temp_c}°C,</p>
-              <p>{weatherData.condition.text}</p>
-              <img src={weatherData.condition.icon} alt="icon" />
-            </div>
-          </div>
-          <div>
-            {tempHours.map((temp) => (
-              <div key={temp.time}>
-                <p>{temp.time.split(" ").pop()}h</p>
-                <p>{temp.temp_c}°C</p>
+
+          {weatherData && (
+            <>
+              <div>
+                <p> {weatherData.temp_c}°C,</p>
+                <p>{weatherData.condition.text}</p>
+                <img src={weatherData.condition.icon} alt="icon" />
               </div>
-            ))}
-          </div>
-           <div>
-            <div key={forecast.date}>
-              {forecast.map((forecast) => (
-                <>
-                  <p>{forecast.date}</p>
-                  <img src={forecast.day.condition.icon} alt="icon"/>
-                  <p>{forecast.day.mintemp_c}°C</p>
-                  <p>{forecast.day.maxtemp_c}°C</p>
-                </>
-              ))}
-            </div>
-          </div>  
+
+              <div>
+                {tempHours.map((temp) => (
+                  <div key={temp.time}>
+                    <p>{temp.time.split(" ").pop()}h</p>
+                    <p>{temp.temp_c}°C</p>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div key={forecast.date}>
+                  {forecast.map((forecast) => (
+                    <>
+                      <p>{forecast.date.split("-").pop()}</p>
+                      <img src={forecast.day.condition.icon} alt="icon" />
+                      <p>{forecast.day.mintemp_c}°C</p>
+                      <p>{forecast.day.maxtemp_c}°C</p>
+                    </>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
