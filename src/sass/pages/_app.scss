@@ -1,0 +1,12 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &_logo {
+    width: 10%;
+  }
+  &_title {
+    margin: 0;
+    text-transform: uppercase;
+  }
+}
