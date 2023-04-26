@@ -1,12 +1,82 @@
-.header {
+.global_wrap {
+  background-color: $light;
+}
+
+.input-wrap {
+  display: flex;
+  justify-content: center;
+}
+.input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5%;
+  height: 3em;
+  width: 80%;
+  @include glass;
+  &_form {
+    &_text {
+      background-color: inherit;
+      border: none;
+    }
+    &_button {
+      background-color: inherit;
+      border: none;
+    }
+  }
+}
+
+.weather-wrap {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  &_logo {
-    width: 10%;
+  text-align: center;
+}
+.weather {
+  margin-top: 5%;
+  width: 80%;
+  @include glass;
+  &_city {
+    margin-top: 2%;
+    &_city {
+      font-size: 2em;
+    }
+    &_region {
+      font-size: 1.6em;
+    }
   }
-  &_title {
-    margin: 0;
-    text-transform: uppercase;
+  &_actual {
+    &_temp {
+      font-size: 6em;
+      margin-bottom: 10%;
+    }
+    &_condition {
+      font-size: 1.3em;
+    }
   }
+  &_prev {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &_selected {
+      cursor: pointer;
+      width: 100%;
+      padding: 5% 8%;
+      margin: 5%;
+      :hover {
+        scale: 1.05;
+      }
+    }
+  }
+}
+
+.slider {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  white-space: nowrap;
+  scroll-behavior: smooth;
 }

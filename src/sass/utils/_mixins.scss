@@ -1,0 +1,6 @@
+@mixin glass {
+  background: linear-gradient(20deg, $light-blue 0%, $light 100%);
+  box-shadow: 0 4px 10px 2px #93939353;
+  border-radius: 1em;
+  backdrop-filter: blur(50px);
+}
